@@ -93,7 +93,15 @@ VALGRIND_ERRORS: list[tuple[str, str, int]] = [
   # REALLOC SIZE ZERO
   (r"^(.*)realloc() with size 0$", "Source and destination overlap in function", SEV_MINOR),
 
-  # INVALID ALIGNMENdocker_modetion", SEV_CRITICAL),
+  # INVALID ALIGNMENT
+  (r"^(.*)Invalid alignment value:(.*)$", "Source and destination overlap in function", SEV_MINOR),
+
+  # UNRECOGNIZED INSTRUCTION
+  (r"^(.*)Unrecognised instruction at address(.*)$", "Source and destination overlap in function", SEV_CRITICAL),
+
+  # CRASH
+  (r"^(.*)Process terminating with default action of signal (.*) \((SIGSEGV|SIGILL|SIGABRT|SIGIOT|SIGBUS|SIGFPE|SIGKILL|SIGXCPU|SIGXFSZ|SIGSYS|SIGUNUSED)\)(.*)$",
+   "Abnormal termination", SEV_CRITICAL),
 ]
 
 VALGRIND_INVAL_FILE_ERROR: tuple[str, str, int] = VALGRIND_ERRORS[0]
