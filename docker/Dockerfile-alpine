@@ -8,5 +8,4 @@ RUN git clone --depth 1 https://github.com/liam-colle-archivist/GrindMe.git
 RUN chmod +x ./install.sh
 RUN ./install.sh
 RUN rm -r *
-RUN ulimit -n 1024
 CMD ["grindme"]
