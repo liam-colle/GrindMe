@@ -29,7 +29,7 @@ grindme [path-to-executable]
 
 ### Configuration
 
-Configuration should be stored in a ``.rcheck`` directory and the configuration file should be named ``ruleset.json``.
+Configuration should be stored in a ``.grindme`` directory and the configuration file should be named ``ruleset.json``.
 
 ### Script Examples
 
