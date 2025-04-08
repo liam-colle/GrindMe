@@ -10,6 +10,15 @@ def gs_excepts_panicstr(message: str) -> str:
     f"[GrindMe] - {Fore.RED}PANIC!{Fore.RESET}\n" +\
     f"> {Fore.YELLOW}{message}{Fore.RESET}"
 
+class GS_ExecutionError(Exception):
+  """Sent in case the program fails"""
+  def __init__(self, message: str):
+    self.message = message
+    super().__init__(self.message)
+
+  def __str__(self):
+    return f"{self.message}"
+
 class GSP_CouldNotLoadJSON(Exception):
   """Sent in case the parser cannot load the json file (E.g.: File does not exist)"""
   def __init__(self, message: str):

@@ -60,6 +60,9 @@ SEV_CRITICAL = 3
 VALGRIND_ERRORS: list[tuple[str, str, int]] = [
   # (Match Regex String: str, Message: str, Severity: int)
 
+  # FILE NOT FOUND
+  (r"^valgrind:(.*): No such file or directory$", "File not found", SEV_MINOR),
+
   # INVALID READ
   (r"^(.*)Invalid read of(.*)size$", "Invalid memory read", SEV_MAJOR),
 
