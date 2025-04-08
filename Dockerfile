@@ -7,4 +7,4 @@ RUN apt -y install bash python3-venv
 RUN chmod +x ./install.sh
 RUN ./install.sh
 RUN rm -r *
-CMD ["grindme", "--githubaction"]
+CMD ["grindme", "--github-action"]
