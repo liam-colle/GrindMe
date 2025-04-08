@@ -3,6 +3,7 @@ from lib.grindscript_parse import GrindScript_Parser
 from lib.grindme_progressbar import Grindme_ProgressBar
 from random import randint
 from typing import Type, Any
+from io import TextIOWrapper
 from colorama import Fore, Back
 from datetime import datetime
 from math import floor
@@ -48,15 +49,16 @@ class GrindScript_Executer:
           if (self.status == STATUS_OK):
             self.status = STATUS_KO
 
-    def __init__(self, test: str, program_name: str, program_args: list[str]):
+    def __init__(self, test: str, program_name: str, program_args: list[str], input_file: str = None):
       self.test: str = test
       self.program_name: str = program_name
       self.program_args: list[str] = program_args
       self.exit_code: int = 0
       self.output: str = ""
       self.outpath = f"/tmp/grindme/{os.getpid()}"
-      self.outfilename = f"{self.test}"
-      self.filename_rev = 0
+      self.outfilename: str = f"{self.test}"
+      self.infilepath: str = input_file
+      self.filename_rev: int = 0
       self.errors: list[str, int]
 
     def read_output(self) -> str | None:
@@ -69,6 +71,9 @@ class GrindScript_Executer:
         return None
 
     def exec(self) -> GrindScript_ErrCheck:
+      outfile: TextIOWrapper = None
+      infile: TextIOWrapper = None
+
       try:
         if (not os.path.exists(self.outpath)):
           os.makedirs(self.outpath)
@@ -80,9 +85,17 @@ class GrindScript_Executer:
         message = f"Execution failure in Test '{self.test}'"
         print(gs_excepts_failstr(message))
         exit(EXIT_FAIL)
+
+      if (self.infilepath != None):
+        try:
+          infile = open(self.infilepath, "r")
+        except FileNotFoundError:
+          message = f"Execution failure in Test '{self.test}'\nMissing input file"
+          print(gs_excepts_failstr(message))
+          exit(EXIT_FAIL)
       try:
         self.output = subprocess.check_output(['valgrind', f'--log-file={self.outpath}/{self.outfilename}_{self.filename_rev}.log', self.program_name]
-                                              + self.program_args, stderr = outfile)
+                                              + self.program_args, stdin = infile, stderr = outfile)
       except subprocess.CalledProcessError as e:
         self.exit_code = e.returncode
       except:
@@ -171,7 +184,8 @@ class GrindScript_Executer:
         print(f"== TEST '{self.parser.suites[i].cmpl_tests[j].t_name}' ==")
         grinder = self.GrindScript_Valgrinder(self.parser.suites[i].cmpl_tests[j].t_name,
                                               self.parser.suites[i].cmpl_tests[j].e_name,
-                                              self.parser.suites[i].cmpl_tests[j].e_args)
+                                              self.parser.suites[i].cmpl_tests[j].e_args,
+                                              self.parser.suites[i].cmpl_tests[j].e_infile)
         results = grinder.exec()
         self.test_results[i][1].append(self.GrindScript_TestResults(test_name, results.status,
                                                                     results.report))

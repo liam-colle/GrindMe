@@ -1,5 +1,6 @@
 import json
 from sys import stderr
+from lib.utils import get_dict_value
 from lib.exceptions import\
   gs_excepts_failstr,\
   GSP_CouldNotLoadJSON,\
@@ -21,6 +22,7 @@ class GrindScript_Parser:
             message = f"Missing mandatory key '{e.args[0]}' in Suite {suite_dat[0]} Test n°{suite_dat[1]}"
             print(gs_excepts_failstr(message), file = stderr)
             exit(EXIT_JSON_FAIL)
+          self.e_infile: str | None = get_dict_value(data, "input_file")
 
     def __init__(self, n: int, data: str):
       try:
