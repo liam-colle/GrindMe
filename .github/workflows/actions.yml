@@ -1,0 +1,190 @@
+name: GrindMe CD/CI
+
+on:
+  push:
+    branches:
+        - "main"
+  pull_request:
+    branches:
+        - "main"
+
+env:
+  PROJECT_NAME: GrindMe
+  DOCKERHUB_USERNAME: liamcollearchivist
+  DOCKERHUB_PROJECT_NAME: grindme
+  EXECUTABLES: /usr/share/grindme/grindme,/usr/bin/grindme
+
+jobs:
+  check_requirements:
+    timeout-minutes: 1
+    runs-on: ubuntu-latest
+    if: ${{ github.repository != '<N/A>' }}
+
+    steps:
+      - name: "[REQUIREMENTS]: Confirm requirements"
+        run: "echo 'Requirements met | Running on Repo: ${{ github.repository }}.'"
+
+  check_program_installation:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: check_requirements
+    container:
+      image: epitechcontent/epitest-docker
+
+    steps:
+    - name: "[GITHUB] Checkout code from GitHub"
+      uses: actions/checkout@v4
+
+    - name: "[PRE-TEST] Get updated packages list"
+      timeout-minutes: 1
+      run: apt update
+
+    - name: "[PRE-TEST] Get updated packages list"
+      timeout-minutes: 1
+      run: apt -y install bash python3-venv git
+
+    - name: "[INSTALL] Install program"
+      timeout-minutes: 3
+      run: ./install.sh
+
+    - name: "[CHECK] Check if executables exists"
+      shell: bash
+      if: success() || failure()
+      run: |
+            for i in $(echo $EXECUTABLES | sed 's/,/ /g'); do if [ -e $i ]; then
+              echo ::notice file=$i,title=Executable file present::$i does exist >> execheck_n; else
+              echo ::error file=$i,title=Executable file missing::$i does not exist >> execheck_e; fi
+            done;
+            [ -f  execheck_n ] && cat execheck_n 2> /dev/null;
+            [ -f execheck_e ] && cat execheck_e 2> /dev/null;
+            if [ -s execheck_e ]; then
+              rm -f execheck_n execheck_e; exit 1; fi
+            rm -f execheck_n execheck_e;
+
+    - name: "[UNINSTALL] Uninstall program"
+      timeout-minutes: 3
+      run: ./uninstall.sh
+
+    - name: "[CHECK] Check if data has been successfully removed"
+      shell: bash
+      if: success() || failure()
+      run: |
+            for i in $(echo $EXECUTABLES | sed 's/,/ /g'); do if [ -e $i ]; then
+              echo ::error file=$i,title=Executable file not removed::$i still exists >> execheck_e; else
+              echo ::notice file=$i,title=Executable file removed::$i doesnt exist anymore >> execheck_n; fi
+            done;
+            [ -f  execheck_n ] && cat execheck_n 2> /dev/null;
+            [ -f execheck_e ] && cat execheck_e 2> /dev/null;
+            if [ -s execheck_e ]; then
+              rm -f execheck_n execheck_e; exit 1; fi
+            rm -f execheck_n execheck_e;
+
+  push_to_docker_hub_image-latest:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: check_program_installation
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+    - name: "[GITHUB] Checkout code from GitHub"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: "[DOCKERHUB] Login to Docker Hub"
+      uses: docker/login-action@v3
+      with:
+        username: ${{ env.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: "[DOCKER] Set up Docker Buildx"
+      uses: docker/setup-buildx-action@v3
+
+    - name: "[DOCKERHUB] Push image to DockerHub"
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        context: .
+        file: ./docker/Dockerfile
+        tags: "${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_PROJECT_NAME }}:latest"
+
+  push_to_docker_hub_image-epitech:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: check_program_installation
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+    - name: "[GITHUB] Checkout code from GitHub"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: "[DOCKERHUB] Login to Docker Hub"
+      uses: docker/login-action@v3
+      with:
+        username: ${{ env.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: "[DOCKER] Set up Docker Buildx"
+      uses: docker/setup-buildx-action@v3
+
+    - name: "[DOCKERHUB] Push image to DockerHub"
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        context: .
+        file: ./docker/Dockerfile-epitech
+        tags: "${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_PROJECT_NAME }}:epitech-latest"
+
+  push_to_docker_hub_image-alpine:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: check_program_installation
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+    - name: "[GITHUB] Checkout code from GitHub"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: "[DOCKERHUB] Login to Docker Hub"
+      uses: docker/login-action@v3
+      with:
+        username: ${{ env.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: "[DOCKER] Set up Docker Buildx"
+      uses: docker/setup-buildx-action@v3
+
+    - name: "[DOCKERHUB] Push image to DockerHub"
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        context: .
+        file: ./docker/Dockerfile-alpine
+        tags: "${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_PROJECT_NAME }}:alpine-latest"
+
+  update_versioning:
+    timeout-minutes: 5
+    runs-on: self-hosted
+    needs: [
+      push_to_docker_hub_image-latest,
+      push_to_docker_hub_image-epitech,
+      push_to_docker_hub_image-alpine,
+    ]
+
+    steps:
+    - name: "[GITHUB] Checkout code from GitHub"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - uses: paulhatch/semantic-version@v5.4.0
+      with:
+        tag_prefix: "v"
+        major_pattern: "BREAKING CHANGE:"
+        minor_pattern: "feat:"
+        version_format: "${major}.${minor}.${patch}.${increment}"
+        search_commit_body: true
