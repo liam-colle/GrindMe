@@ -3,7 +3,7 @@ FROM alpine:latest
 WORKDIR /grindme
 COPY . .
 RUN apk update
-RUN apk add --no-cache bash python3 py3-pip py3-virtualenv git
+RUN apk add --no-cache bash python3 py3-pip py3-virtualenv valgrind git
 RUN git clone --depth 1 https://github.com/liam-colle-archivist/GrindMe.git
 RUN chmod +x ./install.sh
 RUN ./install.sh
