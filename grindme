@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 ARGS=$@
 bash -c "\
     source /usr/share/grindme/.venv/bin/activate;\

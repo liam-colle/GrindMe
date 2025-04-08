@@ -2,7 +2,7 @@ import os
 
 # Critical Program Data
 NAME: str = "GrindMe"
-DESCRIPTION: str = "an automatic valgrind tester for your DevOps or laziness needs."
+DESCRIPTION: str = "An automatic valgrind tester for your DevOps or laziness needs."
 START_MSG: str =\
   f"{NAME}, {DESCRIPTION}\n" +\
   f"Copyright (C) 2025 under license GNU GPL v3, made by Liam Colle\n" +\
@@ -13,9 +13,12 @@ START_MSG: str =\
 VERSION: str = "v0.0.0"
 
 # Script File Generator
-DEF_SCRIPT_PATH = "./.grindme/"
 DEF_SCRIPT_NAME = "config.json"
+DEF_SCRIPT_PATH = "./.grindme/"
 DEF_SCRIPT_INDENT = 2
+DEF_REPORT_PREFIX = "report_"
+DEF_REPORT_PATH = "./.grindme/reports/"
+DEF_REPORT_INDENT = 2
 EXAMPLE_SCRIPT: object = \
 {
   "launch_opts": {
@@ -60,6 +63,9 @@ SEV_CRITICAL = 3
 VALGRIND_ERRORS: list[tuple[str, str, int]] = [
   # (Match Regex String: str, Message: str, Severity: int)
 
+  # FILE NOT FOUND
+  (r"^valgrind:(.*): No such file or directory$", "File not found", SEV_MINOR),
+
   # INVALID READ
   (r"^(.*)Invalid read of(.*)size$", "Invalid memory read", SEV_MAJOR),
 
@@ -97,6 +103,8 @@ VALGRIND_ERRORS: list[tuple[str, str, int]] = [
   (r"^(.*)Process terminating with default action of signal (.*) \((SIGSEGV|SIGILL|SIGABRT|SIGIOT|SIGBUS|SIGFPE|SIGKILL|SIGXCPU|SIGXFSZ|SIGSYS|SIGUNUSED)\)(.*)$",
    "Abnormal termination", SEV_CRITICAL),
 ]
+
+VALGRIND_INVAL_FILE_ERROR: tuple[str, str, int] = VALGRIND_ERRORS[0]
 
 VALGRIND_MEMLEAK = (
   "Memory Leak", SEV_MINOR
