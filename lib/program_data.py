@@ -2,7 +2,7 @@ import os
 
 # Critical Program Data
 NAME: str = "GrindMe"
-DESCRIPTION: str = "an automatic valgrind tester for your DevOps or laziness needs."
+DESCRIPTION: str = "An automatic valgrind tester for your DevOps or laziness needs."
 START_MSG: str =\
   f"{NAME}, {DESCRIPTION}\n" +\
   f"Copyright (C) 2025 under license GNU GPL v3, made by Liam Colle\n" +\
@@ -13,9 +13,12 @@ START_MSG: str =\
 VERSION: str = "v0.0.0"
 
 # Script File Generator
-DEF_SCRIPT_PATH = "./.grindme/"
 DEF_SCRIPT_NAME = "config.json"
+DEF_SCRIPT_PATH = "./.grindme/"
 DEF_SCRIPT_INDENT = 2
+DEF_REPORT_PREFIX = "report_"
+DEF_REPORT_PATH = "./.grindme/reports/"
+DEF_REPORT_INDENT = 2
 EXAMPLE_SCRIPT: object = \
 {
   "launch_opts": {
