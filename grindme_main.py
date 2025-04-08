@@ -6,15 +6,15 @@ from lib.exit_codes import\
 from lib.grindscript_parse import GrindScript_Parser
 from lib.grindscript_exec import GrindScript_Executer
 from lib.grindscript_githubactions import GrindScript_GithubActions
+from lib.grindscript_scriptgen import GrindScript_ScriptGenerator
+from lib.grindscript_reportdumper import GrindScript_ReportDumper, gs_identify_dump
 from lib.exceptions import GSE_ExecutionError, gs_excepts_panicstr
 from lib.program_data import\
   NAME,\
   DESCRIPTION,\
   START_MSG,\
   DEF_SCRIPT_NAME,\
-  DEF_SCRIPT_PATH,\
-  DEF_SCRIPT_INDENT,\
-  EXAMPLE_SCRIPT
+  DEF_SCRIPT_PATH
 
 def print_command_headers(args: object):
   print(
@@ -23,32 +23,6 @@ def print_command_headers(args: object):
     "Is Verbose: " + f"{args.verbose}\n"
   )
 
-def generate_file():
-  try:
-    ## Prompts
-    pr_outpath = input(f"Path to grindme directory [Default: {DEF_SCRIPT_PATH}]") or DEF_SCRIPT_PATH
-    pr_outname = input(f"Name of script file [Default: {DEF_SCRIPT_NAME}]") or DEF_SCRIPT_NAME
-    try:
-      pr_indents = int(input(f"Number of indents [Default: {DEF_SCRIPT_INDENT}]") or DEF_SCRIPT_INDENT)
-    except ValueError:
-      pr_indents = 2
-
-    ## Writer
-    if (not os.path.exists(pr_outpath)):
-      os.makedirs(pr_outpath)
-    file = open(f"{pr_outpath}/{pr_outname}", "w")
-    file.write(json.dumps(EXAMPLE_SCRIPT, indent = pr_indents))
-    file.close()
-  except FileNotFoundError:
-    message = f"GrindScript file \"{pr_outpath}/{pr_outname}\" not found"
-    print(gs_excepts_panicstr(message), file = stderr)
-    exit(EXIT_FAIL)
-  except Exception as e:
-    message = f"An unknown exception occured:\n{e}"
-    print(gs_excepts_panicstr(message), file = stderr)
-    exit(EXIT_FAIL)
-
-
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(
     prog = NAME,
@@ -56,6 +30,17 @@ if __name__ == "__main__":
   )
   parser.add_argument(
     "filename",
+    type = str,
+    nargs = "?",
+  )
+  parser.add_argument(
+    "--dump-report",
+    type = str,
+    nargs = "?",
+    const = ""
+  )
+  parser.add_argument(
+    "--dump-report-type",
     type = str,
     nargs = "?",
   )
@@ -83,13 +68,19 @@ if __name__ == "__main__":
   if (args.verbose):
     print_command_headers(args)
   if (args.generate_file):
-    generate_file()
-  gs_parser = GrindScript_Parser(".grindme/config.json")
+    generator = GrindScript_ScriptGenerator()
+    generator.write()
+    exit(EXIT_SUCCESS)
+  gs_parser = GrindScript_Parser(args.filename or DEF_SCRIPT_PATH + DEF_SCRIPT_NAME)
   gs_exec = GrindScript_Executer(gs_parser)
   if (args.github_action):
     gs_ga = GrindScript_GithubActions(gs_exec.json_log)
     gs_ga.actionify()
     gs_ga.dump_ga_annotations()
+  if (args.dump_report is not None):
+    dumper = GrindScript_ReportDumper(gs_exec.json_log, args.dump_report,
+                                      gs_identify_dump(args.dump_report_type))
+    dumper.write()
   if (gs_exec.success == False):
     exit(EXIT_SUCCESS)
   exit(EXIT_FAIL)
