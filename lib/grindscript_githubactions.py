@@ -12,14 +12,16 @@ class GrindScript_GithubActions:
 
   def get_status_str(self, stat: int) -> str:
     if (stat == STATUS_OK):
-      return "Ok"
+      return "information"
     if (stat == STATUS_KO):
-      return "Error"
+      return "error"
     if (stat == STATUS_CRASH):
-      return "Crash"
-    return "UNKNOWN"
+      return "crash"
+    return "unidentified error"
 
   def build_annotation(self, t_name: str, t_id: int, t_stat: int, reason: str) -> str:
+    if (t_stat == "information"):
+      return f"::notice file={t_name},line={t_id},endLine={t_id},title=GrindMe {self.get_status_str(t_stat)} reported::{reason}"
     return f"::error file={t_name},line={t_id},endLine={t_id},title=GrindMe {self.get_status_str(t_stat)} reported::{reason}"
 
   def actionify(self) -> None:
