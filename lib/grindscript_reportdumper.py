@@ -63,6 +63,10 @@ class GrindScript_ReportDumper:
     self.pr_outname: str = DEF_REPORT_PREFIX + "unknown" + ".json"
     self.out_file: TextIOWrapper = None
 
+    if (type == self.DUMPER_TYPES.UNKNOWN_DUMPER):
+      message = f"Incorrect dumper type"
+      print(gs_excepts_failstr(message), file = stderr)
+      exit(EXIT_FAIL)
     try:
       self.pr_outname = path or DEF_REPORT_PREFIX + str(json_log['exec_epoch']) + ".json"
     except Exception as e:
@@ -93,7 +97,7 @@ class GrindScript_ReportDumper:
         return self.GrindScript_ReportJSONDumper(self.json_log, self.out_file,
                                                  write_data)
       case _:
-        message = f"Incorrect dumper type\n"
+        message = f"Incorrect dumper type"
         print(gs_excepts_failstr(message), file = stderr)
         exit(EXIT_FAIL)
 
