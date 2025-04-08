@@ -19,6 +19,7 @@ from lib.program_data import\
   SEV_MAJOR,\
   SEV_CRITICAL,\
   VALGRIND_ERRORS,\
+  VALGRIND_INVAL_FILE_ERROR,\
   VALGRIND_MEMLEAK
 
 
@@ -41,7 +42,8 @@ class GrindScript_Executer:
               self.status = STATUS_KO
             if (self.status == STATUS_KO and error[2] == SEV_CRITICAL):
               self.status = STATUS_CRASH
-        if self.out_data.find("in use at exit: 0 bytes in 0 blocks") == -1:
+        if (self.out_data.find("in use at exit: 0 bytes in 0 blocks") == -1\
+            and len(re.findall(VALGRIND_INVAL_FILE_ERROR[0], self.out_data, re.MULTILINE)) <= 0):
           self.report.append(VALGRIND_MEMLEAK)
           if (self.status == STATUS_OK):
             self.status = STATUS_KO
