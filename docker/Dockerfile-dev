@@ -1,0 +1,11 @@
+# syntax=docker/dockerfile:1
+FROM epitechcontent/epitest-docker:latest
+WORKDIR /grindme
+COPY . .
+RUN apt update
+RUN apt -y install bash python3-venv git
+RUN git clone --depth 1 --branch dev https://github.com/liam-colle-archivist/GrindMe.git
+RUN chmod +x ./install.sh
+RUN ./install.sh
+RUN rm -r *
+CMD ["grindme"]
