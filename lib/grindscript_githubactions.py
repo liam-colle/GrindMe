@@ -13,7 +13,7 @@ class GrindScript_GithubActions:
   def get_status_str(self, stat: int) -> str:
     if (stat == STATUS_OK):
       return "Ok"
-    if (stat == STATUS_CRASH):
+    if (stat == STATUS_KO):
       return "Error"
     if (stat == STATUS_CRASH):
       return "Crash"
