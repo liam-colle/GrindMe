@@ -1,10 +1,10 @@
-#!/usr/bin/bash
+#!/bin/bash
 GREEN="\e[32m"
 YELLOW="\e[33m"
 RED="\e[31m"
 ENDCOLOR="\e[0m"
 
-sudo bash -c """\
+COMMAND_CHAIN="""\
     set -e
     echo -e '===== GRINDME INSTALLER (LOCAL) =====';\
     echo -e '=== 1 - ${YELLOW}INSTALLING CORE FILES${ENDCOLOR} ===';\
@@ -24,3 +24,10 @@ sudo bash -c """\
     echo "";\
     echo GrindMe has been successfully installed / updated!;\
 """
+
+if [ $(id -u) -ne 0 ]
+then
+    sudo bash -c "${COMMAND_CHAIN}"
+else
+    bash -c "${COMMAND_CHAIN}"
+fi

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 sudo bash -c """\
     echo Uninstalling local grindme installation...;\
     rm -r .venv;\
