@@ -1,5 +1,6 @@
 import os
 from math import floor
+from lib.utils import get_terminal_size
 from colorama import Fore
 
 PB_ST_BRAKCET = "["
@@ -9,7 +10,7 @@ PB_END_BRAKCET = "]"
 
 class Grindme_ProgressBar:
   def __init__(self):
-    self.__length: int = os.get_terminal_size().columns // 4
+    self.__length: int = get_terminal_size()[0] // 4
     self.progress: int = 0
 
   def pb_print(self, add_color: True = True):
