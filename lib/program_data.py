@@ -22,9 +22,6 @@ DEF_REPORT_PATH = "./.grindme/reports/"
 DEF_REPORT_INDENT = 2
 EXAMPLE_SCRIPT: object = \
 {
-  "launch_opts": {
-    "strict": False
-  },
   "suites": [
     {
       "name": "<name>",
@@ -34,17 +31,9 @@ EXAMPLE_SCRIPT: object = \
           "description": "<description>",
           "executable": "<filename>",
           "args": [],
-          "opts": {
-            "redirect_stdout": None,
-            "pretest_cmd": ["<command_before_test>", "[optional_args]"],
-            "posttest_cmd": ["<command_before_test>", "[optional_args]"]
-          }
+          "input_file": None
         }
       ],
-      "opts": {
-        "pretest_cmd": ["<command_before_suite>", "[optional_args]"],
-        "posttest_cmd": ["<command_before_suite>", "[optional_args]"]
-      }
     }
   ]
 }
