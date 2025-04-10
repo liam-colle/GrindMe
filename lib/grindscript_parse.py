@@ -56,6 +56,10 @@ class GrindScript_Parser:
       print(GSP_CouldNotLoadJSON(f"Script file does not exist: '{filename}'"), file = stderr)
       exit(EXIT_PARSER_FAIL)
 
-    for i in range(len(self.json["suites"])):
-      self.suites.append(self.GrindScript_Suite(i, self.json["suites"][i], ))
-    self.n_suites = len(self.suites)
+    try:
+      for i in range(len(self.json["suites"])):
+        self.suites.append(self.GrindScript_Suite(i, self.json["suites"][i], ))
+      self.n_suites = len(self.suites)
+    except KeyError:
+      print(GSP_JSONParseError(f"No suites in script: '{filename}'"), file = stderr)
+      exit(EXIT_PARSER_FAIL)
