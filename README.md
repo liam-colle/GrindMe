@@ -22,7 +22,7 @@ By default, GrindMe doesn't test anything unless specified.
 ### How to install?
 
 ```shell
-curl -B https://raw.githubusercontent.com/Charlito33/rCheck2/refs/heads/master/install.sh | bash
+curl -B https://raw.githubusercontent.com/liam-colle-archivist/GrindMe/refs/heads/main/install.sh | bash
 ```
 
 ## Features
