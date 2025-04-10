@@ -82,5 +82,5 @@ if __name__ == "__main__":
                                       gs_identify_dump(args.dump_report_type))
     dumper.write()
   if (gs_exec.success == False):
-    exit(EXIT_SUCCESS)
-  exit(EXIT_FAIL)
+    exit(EXIT_FAIL)
+  exit(EXIT_SUCCESS)
