@@ -45,7 +45,7 @@ jobs:
 
     - name: "[INSTALL] Install program"
       timeout-minutes: 3
-      run: ./install.sh
+      run: ./install_system.sh
 
     - name: "[CHECK] Check if executables exists"
       shell: bash
@@ -63,7 +63,7 @@ jobs:
 
     - name: "[UNINSTALL] Uninstall program"
       timeout-minutes: 3
-      run: ./uninstall.sh
+      run: ./uninstall_system.sh
 
     - name: "[CHECK] Check if data has been successfully removed"
       shell: bash
