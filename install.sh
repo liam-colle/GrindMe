@@ -7,6 +7,7 @@ ENDCOLOR="\e[0m"
 RM=rm
 GIT_COMMAND=git
 PYTHON3_COMMAND=python3
+VALGRIND_COMMAND=valgrind
 
 ## Check required commands
 if ! command -v $GIT_COMMAND 2>&1 >/dev/null
@@ -18,6 +19,12 @@ fi
 if ! command -v $PYTHON3_COMMAND 2>&1 >/dev/null
 then
     echo -e "${YELLOW}${PYTHON3_COMMAND}${RED} could not be found!${ENDCOLOR}\nPlease install the ${YELLOW}${PYTHON3_COMMAND}${ENDCOLOR} package."
+    exit 1
+fi
+
+if ! command -v $VALGRIND_COMMAND 2>&1 >/dev/null
+then
+    echo -e "${YELLOW}${VALGRIND_COMMAND}${RED} could not be found!${ENDCOLOR}\nPlease install the ${YELLOW}${VALGRIND_COMMAND}${ENDCOLOR} package."
     exit 1
 fi
 
