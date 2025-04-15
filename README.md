@@ -2,7 +2,7 @@
 
 **An automatic valgrind tester for your DevOps or laziness needs.**
 
-![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54&label=3.11.12)
+![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54&label=3.11.2)
 [![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=flat&logo=githubactions&logoColor=white)](https://github.com/liam-colle-archivist/GrindMe/actions)
 [![GrindMe CD/CI](https://github.com/liam-colle-archivist/GrindMe/actions/workflows/actions.yml/badge.svg)](https://github.com/liam-colle-archivist/GrindMe/actions/workflows/actions.yml)
 ![GPL v3](https://img.shields.io/badge/license-GPLv3-blue?style=flat)

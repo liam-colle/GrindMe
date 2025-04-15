@@ -33,5 +33,7 @@ if ! git clone --depth=1 https://github.com/liam-colle-archivist/GrindMe.git /tm
     echo -e "${RED}${GIT_COMMAND} could not clone the repository.\n${YELLOW}Check your connection to github.${ENDCOLOR}"
     exit 1
 fi
-/tmp/grindme-installer/install_system.sh
+cd /tmp/grindme-installer
+./install_system.sh
+cd -
 $RM -rf /tmp/grindme-installer
