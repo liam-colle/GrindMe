@@ -278,4 +278,4 @@ jobs:
     # < Do your teardown here
 ```
 
-[GrindMe](https://github.com/liam-colle-archivist/GrindMe) by [Liam Colle](https://github.com/liam-colle-archivist) is licensed under GPL v3.
+[GrindMe](https://github.com/liam-colle/GrindMe) by [Liam Colle](https://github.com/liam-colle) is licensed under GPL v3.
