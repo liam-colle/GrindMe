@@ -29,7 +29,7 @@ then
 fi
 
 $RM -rf /tmp/grindme-installer
-if ! git clone --depth=1 https://github.com/liam-colle-archivist/GrindMe.git /tmp/grindme-installer 2> /dev/null; then
+if ! git clone --depth=1 https://github.com/liam-colle/GrindMe.git /tmp/grindme-installer 2> /dev/null; then
     echo -e "${RED}${GIT_COMMAND} could not clone the repository.\n${YELLOW}Check your connection to github.${ENDCOLOR}"
     exit 1
 fi
