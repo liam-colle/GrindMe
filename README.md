@@ -3,8 +3,8 @@
 **An automatic valgrind tester for your DevOps or laziness needs.**
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54&label=3.11.2)
-[![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=flat&logo=githubactions&logoColor=white)](https://github.com/liam-colle-archivist/GrindMe/actions)
-[![GrindMe CD/CI](https://github.com/liam-colle-archivist/GrindMe/actions/workflows/actions.yml/badge.svg)](https://github.com/liam-colle-archivist/GrindMe/actions/workflows/actions.yml)
+[![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=flat&logo=githubactions&logoColor=white)](https://github.com/liam-colle/GrindMe/actions)
+[![GrindMe CD/CI](https://github.com/liam-colle/GrindMe/actions/workflows/actions.yml/badge.svg)](https://github.com/liam-colle/GrindMe/actions/workflows/actions.yml)
 ![GPL v3](https://img.shields.io/badge/license-GPLv3-blue?style=flat)
 
 ## Description
@@ -27,7 +27,7 @@ By default, GrindMe doesn't test anything unless specified.
 ### How to install?
 
 ```shell
-curl -B https://raw.githubusercontent.com/liam-colle-archivist/GrindMe/refs/heads/main/install.sh | bash
+curl -B https://raw.githubusercontent.com/liam-colle/GrindMe/refs/heads/main/install.sh | bash
 ```
 
 ## Features
@@ -278,4 +278,4 @@ jobs:
     # < Do your teardown here
 ```
 
-[GrindMe](https://github.com/liam-colle-archivist/GrindMe) by [Liam Colle](https://github.com/liam-colle-archivist) is licensed under GPL v3.
+[GrindMe](https://github.com/liam-colle/GrindMe) by [Liam Colle](https://github.com/liam-colle) is licensed under GPL v3.
