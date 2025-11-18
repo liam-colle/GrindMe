@@ -1,4 +1,3 @@
-import os
 from math import floor
 from lib.utils import get_terminal_size
 from colorama import Fore
