@@ -1,11 +1,24 @@
 # syntax=docker/dockerfile:1
+
 FROM alpine:latest
+
 WORKDIR /grindme
+
+# Copy all files from source to docker image
 COPY . .
+
+# Install dependencies
 RUN apk update
 RUN apk add --no-cache bash python3 py3-pip py3-virtualenv valgrind git
+
+# Clone GrindMe Github Repository
 RUN git clone --depth 1 https://github.com/liam-colle/GrindMe.git
+
+# Grindme system wide installation
 RUN chmod +x ./install.sh
 RUN ./install.sh
+
+# Cleanup
 RUN rm -r *
+
 CMD ["grindme"]
