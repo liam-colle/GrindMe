@@ -1,11 +1,23 @@
 # syntax=docker/dockerfile:1
 FROM epitechcontent/epitest-docker:latest
+
 WORKDIR /grindme
+
+# Copy all files from source to docker image
 COPY . .
+
+# Install dependencies
 RUN apt update
 RUN apt -y install bash python3-venv git valgrind
+
+# Clone GrindMe Github Repository
 RUN git clone --depth 1 https://github.com/liam-colle/GrindMe.git
+
+# Grindme system wide installation
 RUN chmod +x ./install.sh
 RUN ./install.sh
+
+# Cleanup
 RUN rm -r *
+
 CMD ["grindme"]

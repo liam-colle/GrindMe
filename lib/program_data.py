@@ -1,4 +1,3 @@
-import os
 from lib.utils import get_terminal_size
 
 # Critical Program Data

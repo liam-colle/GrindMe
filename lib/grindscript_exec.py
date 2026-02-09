@@ -1,7 +1,6 @@
 import subprocess, os, re
 from lib.grindscript_parse import GrindScript_Parser
 from lib.grindme_progressbar import Grindme_ProgressBar
-from random import randint
 from typing import Type, Any
 from io import TextIOWrapper
 from colorama import Fore, Back
