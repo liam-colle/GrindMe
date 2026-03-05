@@ -18,6 +18,7 @@ from lib.program_data import\
   SEV_MINOR,\
   SEV_MAJOR,\
   SEV_CRITICAL,\
+  VALGRIND_DEFAULT_TIMEOUT,\
   VALGRIND_ERRORS,\
   VALGRIND_INVAL_FILE_ERROR,\
   VALGRIND_MEMLEAK
@@ -42,16 +43,29 @@ class GrindScript_Executer:
               self.status = STATUS_KO
             if (self.status == STATUS_KO and error[2] == SEV_CRITICAL):
               self.status = STATUS_CRASH
-        if (self.out_data.find("in use at exit: 0 bytes in 0 blocks") == -1\
-            and len(re.findall(VALGRIND_INVAL_FILE_ERROR[0], self.out_data, re.MULTILINE)) <= 0):
-          self.report.append(VALGRIND_MEMLEAK)
-          if (self.status == STATUS_OK):
-            self.status = STATUS_KO
+        # Count allocs and frees to assess memleaks
+        memleaks_assessment = re.findall(VALGRIND_MEMLEAK[0], self.out_data, re.MULTILINE)
+        # Examine each match to determine if there is a memory leak
+        for match in memleaks_assessment:
+          allocs = int(str(match[1]).replace(",", ""))
+          frees = int(str(match[2]).replace(",", ""))
+          if (allocs > frees):
+             self.report.append((VALGRIND_MEMLEAK[1] + f" ({allocs} allocs, {frees} frees)", VALGRIND_MEMLEAK[2]))
+             if (self.status == STATUS_OK):
+              self.status = STATUS_KO
 
-    def __init__(self, test: str, program_name: str, program_args: list[str], input_file: str = None):
+    def __init__(self,
+                 test: str,
+                 program_name: str,
+                 program_args: list[str],
+                 valgrind_args: list[str] = [],
+                 timeout: float = None,
+                 input_file: str = None
+                ):
       self.test: str = test
       self.program_name: str = program_name
       self.program_args: list[str] = program_args
+      self.valgrind_args: list[str] = valgrind_args
       self.exit_code: int = 0
       self.output: str = ""
       self.outpath = f"/tmp/grindme/{os.getpid()}"
@@ -59,6 +73,7 @@ class GrindScript_Executer:
       self.infilepath: str = input_file
       self.filename_rev: int = 0
       self.errors: list[str, int]
+      self.timeout: float = timeout or VALGRIND_DEFAULT_TIMEOUT
 
     def read_output(self) -> str | None:
       try:
@@ -76,7 +91,7 @@ class GrindScript_Executer:
       try:
         if (not os.path.exists(self.outpath)):
           os.makedirs(self.outpath)
-        outfile = open(f"{self.outpath}/{self.outfilename}_{self.filename_rev}.log", "x")
+        outfile = open(f"{self.outpath}/{self.outfilename}_{self.filename_rev}.log", "a")
       except FileExistsError:
         self.filename_rev += 1
         return self.exec()
@@ -93,12 +108,22 @@ class GrindScript_Executer:
           print(gs_excepts_failstr(message))
           exit(EXIT_FAIL)
       try:
-        self.output = subprocess.check_output(['valgrind', f'--log-file={self.outpath}/{self.outfilename}_{self.filename_rev}.log', self.program_name]
-                                              + self.program_args, stdin = infile, stderr = outfile)
+        self.output = subprocess.check_output(
+          ['valgrind']
+            + self.valgrind_args
+            + [self.program_name]
+            + self.program_args,
+          stdin = infile,
+          stderr = outfile,
+          timeout = self.timeout
+        )
       except subprocess.CalledProcessError as e:
         self.exit_code = e.returncode
-      except:
-        message = f"Execution failure in Test '{self.test}'"
+      except subprocess.TimeoutExpired:
+        message = f"Execution timeout in Test '{self.test}'"
+        print(gs_excepts_failstr(message))
+      except Exception as e:
+        message = f"Execution failure in Test '{self.test}'\nUnknown error: {e}"
         print(gs_excepts_failstr(message))
         exit(EXIT_FAIL)
       err_check = self.GrindScript_ErrCheck(self.read_output())
@@ -184,6 +209,8 @@ class GrindScript_Executer:
         grinder = self.GrindScript_Valgrinder(self.parser.suites[i].cmpl_tests[j].t_name,
                                               self.parser.suites[i].cmpl_tests[j].e_name,
                                               self.parser.suites[i].cmpl_tests[j].e_args,
+                                              self.parser.suites[i].cmpl_tests[j].v_args,
+                                              self.parser.suites[i].cmpl_tests[j].e_timeout,
                                               self.parser.suites[i].cmpl_tests[j].e_infile)
         results = grinder.exec()
         self.test_results[i][1].append(self.GrindScript_TestResults(test_name, results.status,
