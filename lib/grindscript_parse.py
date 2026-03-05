@@ -8,6 +8,7 @@ from lib.exceptions import\
 from lib.exit_codes import\
   EXIT_PARSER_FAIL,\
   EXIT_JSON_FAIL
+from lib.program_data import VALGRIND_DEFAULT_TIMEOUT
 
 class GrindScript_Parser:
   class GrindScript_Suite:
@@ -18,11 +19,21 @@ class GrindScript_Parser:
             self.t_desc: str = data["description"]
             self.e_name: str = data["executable"]
             self.e_args: list[str] = data["args"]
+            self.v_args: list[str] = ["--tool=memcheck"]
           except KeyError as e:
             message = f"Missing mandatory key '{e.args[0]}' in Suite {suite_dat[0]} Test n°{suite_dat[1]}"
             print(gs_excepts_failstr(message), file = stderr)
             exit(EXIT_JSON_FAIL)
-          self.e_infile: str | None = get_dict_value(data, "input_file")
+          self.e_infile: str | None = get_dict_value(data, ["input_file"])
+          self.e_timeout: float = get_dict_value(data, ["options", "timeout"], VALGRIND_DEFAULT_TIMEOUT)
+
+          # Add executable args for valgrind
+          self.v_trace_children: bool = get_dict_value(data, ["options", "trace_children"], False)
+          if (self.v_trace_children):
+            self.v_args = ["--trace-children=yes"] + self.v_args
+          self.v_lenient_memory_check: bool = get_dict_value(data, ["options", "lenient_memory_check"], False)
+          if (not self.v_lenient_memory_check):
+            self.v_args = ["--leak-check=full"] + self.v_args
 
     def __init__(self, n: int, data: str):
       try:

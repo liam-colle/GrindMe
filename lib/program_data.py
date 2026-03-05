@@ -61,6 +61,18 @@ VALGRIND_ERRORS: list[tuple[str, str, int]] = [
   # INVALID WRITE
   (r"^(.*)Invalid write of(.*)size$", "Invalid memory write", SEV_MAJOR),
 
+  # DEFINITELY LOST
+  (r"(.*) bytes in (.*) blocks are definitely lost in loss record (.*) of (.*)$", "Definitely lost memory", SEV_MINOR),
+
+  # INDIRECTLY LOST
+  (r"(.*) bytes in (.*) blocks are indirectly lost in loss record (.*) of (.*)$", "Indirectly lost memory", SEV_MINOR),
+
+  # POSSIBLY LOST
+  (r"(.*) bytes in (.*) blocks are possibly lost in loss record (.*) of (.*)$", "Possibly lost memory", SEV_MINOR),
+
+  # STILL REACHABLE
+  (r"(.*) bytes in (.*) blocks are still reachable in loss record (.*) of (.*)$", "Still reachable memory", SEV_MINOR),
+
   # CONDITIONAL JUMP ON UNINITIALIZED VALUES
   (r"^(.*)Conditional jump or move depends on uninitialised value\(s\)$", "Conditional jump on uninitialized values", SEV_MINOR),
 
@@ -96,5 +108,8 @@ VALGRIND_ERRORS: list[tuple[str, str, int]] = [
 VALGRIND_INVAL_FILE_ERROR: tuple[str, str, int] = VALGRIND_ERRORS[0]
 
 VALGRIND_MEMLEAK = (
-  "Memory Leak", SEV_MINOR
+  r"^(.*)total heap usage: (.*) allocs, (.*) frees, (.*) bytes allocated$", "Memory Leak", SEV_MINOR
 )
+
+# Default Valgrind Timeout (in seconds)
+VALGRIND_DEFAULT_TIMEOUT: float = 30 * 60.0 # 30 minutes
