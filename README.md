@@ -62,7 +62,8 @@ options:
 Configuration should be stored in a ``.grindme`` directory and the configuration file should be named ``config.json``
 if you want to run GrindMe in "automatic mode" / without any arguments.
 
-The json scripts should be structured like the following:
+
+The JSON scripts now support additional per-test options under an `options` object. Example structure:
 
 ```json
 {
@@ -75,7 +76,12 @@ The json scripts should be structured like the following:
           "description": "Check if program works",
           "executable": "./mytest",
           "args": [],
-          "input_file": null
+          "input_file": null,
+          "options": {
+            "timeout": 10.0,                // [optional] Timeout in seconds for this test (float, default: 10.0)
+            "trace_children": true,         // [optional] Trace child processes (bool, default: false)
+            "lenient_memory_check": false   // [optional] If true, disables full leak check (bool, default: false)
+          }
         }
       ]
     }
@@ -85,13 +91,16 @@ The json scripts should be structured like the following:
 
 * ``suites``: The suites used by grindme ``(list: (object))``
   * ``name``: The name of the suite ``(string)``
-  * ``tests``: The name of the suite ``(list: (object))``
+  * ``tests``: The tests in the suite ``(list: (object))``
     * ``name``: The name of the test ``(string)``
     * ``description``: The description of the test ``(string)``
     * ``executable``: The executable used by the test ``(string)``
-    * ``description``: The description of the test ``(string)``
     * ``args``: The arguments used by the test ``(list: (string))``
     * ``input_file``: A file to pipe into the stdin buffer of the program ``(string | null)`` ``[optional]``
+    * ``options``: Additional test options ``(object)`` ``[optional]``
+      * ``timeout``: Timeout in seconds for this test ``(float, default: 10.0)``
+      * ``trace_children``: Trace child processes ``(bool, default: false)``
+      * ``lenient_memory_check``: If true, disables full leak check ``(bool, default: false)``
 
 ### Script Examples
 
